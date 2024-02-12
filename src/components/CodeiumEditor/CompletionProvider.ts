@@ -108,18 +108,19 @@ export class MonacoCompletionProvider {
     token.onCancellationRequested(() => {
       abortController.abort();
     });
-    const signal = abortController.signal;
+    // const signal = abortController.signal;
 
     this.setStatus(Status.PROCESSING);
     this.setMessage("Generating completions...");
 
-    const documentInfo = this.getDocumentInfo(document, position);
-    const editorOptions = {
-      tabSize: BigInt(model.getOptions().tabSize),
-      insertSpaces: model.getOptions().insertSpaces,
-    };
+    // const documentInfo = this.getDocumentInfo(document, position);
+    // const editorOptions = {
+    //   tabSize: BigInt(model.getOptions().tabSize),
+    //   insertSpaces: model.getOptions().insertSpaces,
+    // };
 
     // Get completions.
+    /* Don't use Codeium completions
     let getCompletionsResponse: GetCompletionsResponse;
     try {
       getCompletionsResponse = await this.client.getCompletions(
@@ -151,6 +152,17 @@ export class MonacoCompletionProvider {
       return undefined;
     }
     const completionItems = getCompletionsResponse.completionItems;
+    */
+
+    // Use custom completions
+    const startOfCurrentLine = 7; // TODO: actually get the start of current line
+    const currentCursorPosition = 10; // TODO: actually get the current cursor position
+  
+    const item = new CompletionItem().fromJson({
+      completion: {text: 'import zebra'}, // TODO: actually generate a completion from the current editor contents
+      range: {startOffset: startOfCurrentLine, endOffset: currentCursorPosition}
+    })
+    const completionItems = [item];
 
     // Create inline completion items from completions.
     const inlineCompletionItems = completionItems
